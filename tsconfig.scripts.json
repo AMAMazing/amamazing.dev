@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Tell TypeScript to compile to the CommonJS module system, which Node.js uses.
+    "module": "commonjs"
+  },
+  // Specify that this configuration only applies to the files in the 'scripts' folder.
+  "include": ["scripts/**/*.ts"]
+}
