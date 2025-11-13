@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Featured', href: '#featured', icon: Rocket },
   { name: 'Tech Stack', href: '#tech-stack', icon: Code2 },
   { name: 'Web Apps', href: '#web-apps', icon: Globe },
+  { name: 'Desktop Apps', href: '#desktop-apps', icon: TerminalSquare },
   { name: 'Packages', href: '#packages', icon: Box },
   { name: 'Extensions', href: '#extensions', icon: Chrome },
   { name: 'Stats', href: '#stats', icon: TerminalSquare },
@@ -71,6 +72,28 @@ const webApps = [
     emoji: '🎧',
     url: 'https://www.djmalona.com/',
     description: 'A custom biotool with categorized links, designed specifically for one client\'s unique needs.'
+  }
+];
+
+// NEW: Added Desktop Applications section with automatic icon fetching
+const desktopApps = [
+  {
+    title: 'VSCode Hub',
+    url: 'https://github.com/AMAMazing/VSCode-Hub',
+    description: 'A sleek, cross-platform GUI for quickly finding and launching your recent Visual Studio Code projects.',
+    iconUrl: 'https://raw.githubusercontent.com/AMAMazing/VSCode-Hub/main/VSCode%20Hub_icon.ico'
+  },
+  {
+    title: 'Rekordbox YT-Music Bridge',
+    url: 'https://github.com/AMAMazing/Rekordbox-YT-Music-Bridge',
+    description: 'A GUI tool to sync your YouTube Music playlists directly into Pioneer\'s Rekordbox software.',
+    iconUrl: 'https://raw.githubusercontent.com/AMAMazing/Rekordbox-YT-Music-Bridge/main/YTMusic%20Rekordbox%20Bridge_icon.ico'
+  },
+  {
+    title: 'Python Taskbar Pinner',
+    url: 'https://github.com/AMAMazing/Python-Taskbar-Pinner',
+    description: 'A Windows utility to create custom taskbar shortcuts for Python scripts, with the option to add your own image.',
+    iconUrl: 'https://raw.githubusercontent.com/AMAMazing/Python-Taskbar-Pinner/main/main_icon.ico'
   }
 ];
 
@@ -179,7 +202,7 @@ const SectionHeading = ({ emoji, title, id }: { emoji: string; title: string; id
   </div>
 );
 
-const ProjectCard = ({ title, emoji, url, description, badges, isSmall }: { title: string; emoji?: string; url: string; description: string; badges?: { src: string; alt: string; url: string }[]; isSmall?: boolean }) => {
+const ProjectCard = ({ title, emoji, url, description, badges, isSmall, iconUrl }: { title: string; emoji?: string; url: string; description: string; badges?: { src: string; alt: string; url: string }[]; isSmall?: boolean, iconUrl?: string }) => {
   if (isSmall) {
     return (
       <a 
@@ -189,8 +212,13 @@ const ProjectCard = ({ title, emoji, url, description, badges, isSmall }: { titl
         className="group flex items-center justify-between p-4 bg-slate-900/50 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 rounded-xl transition-all duration-300"
       >
         <div>
-            <h3 className="font-semibold text-slate-200 group-hover:text-indigo-400 transition-colors">
-                {emoji && <span className="mr-2">{emoji}</span>} {title}
+            <h3 className="font-semibold text-slate-200 group-hover:text-indigo-400 transition-colors flex items-center gap-2">
+                {iconUrl ? (
+                    <img src={iconUrl} alt={`${title} icon`} className="w-5 h-5 rounded-md object-contain bg-slate-700/50 flex-shrink-0" />
+                ) : emoji && (
+                    <span className="flex-shrink-0">{emoji}</span>
+                )}
+                <span>{title}</span>
             </h3>
             <p className="text-sm text-slate-400 mt-1">{description}</p>
         </div>
@@ -204,8 +232,12 @@ const ProjectCard = ({ title, emoji, url, description, badges, isSmall }: { titl
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       
       <div className="flex items-start justify-between mb-4 relative z-10">
-        <div className="flex items-center gap-3">
-          {emoji && <span className="text-3xl filter drop-shadow">{emoji}</span>}
+        <div className="flex items-center gap-4">
+          {iconUrl ? (
+            <img src={iconUrl} alt={`${title} icon`} className="w-12 h-12 rounded-xl shadow-lg object-contain bg-slate-800/80 p-1" />
+          ) : emoji && (
+            <span className="text-3xl filter drop-shadow">{emoji}</span>
+          )}
           <h3 className="text-xl font-bold text-slate-100 group-hover:text-indigo-300 transition-colors">
             {title}
           </h3>
@@ -373,6 +405,16 @@ export default function App() {
           <SectionHeading emoji="🌐" title="Web Applications" id="web-apps" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {webApps.map((project, idx) => (
+              <ProjectCard key={idx} {...project} />
+            ))}
+          </div>
+        </section>
+
+        {/* Desktop Applications */}
+        <section id="desktop-apps" className="my-24">
+          <SectionHeading emoji="🖥️" title="Desktop Applications" id="desktop-apps" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {desktopApps.map((project, idx) => (
               <ProjectCard key={idx} {...project} />
             ))}
           </div>
