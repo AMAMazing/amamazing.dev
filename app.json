@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "AMAMazing",
+    "slug": "amamazing-dev",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "amamazing",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#121212"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "title": "AMAMazing - Developer Portfolio"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
