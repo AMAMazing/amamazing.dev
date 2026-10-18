@@ -4,10 +4,16 @@ import { ExternalLink, Sparkles, GitFork } from 'lucide-react-native';
 import { ProjectItem } from '../lib/data';
 import { theme } from '../lib/theme';
 
+export interface HoverOrigin {
+  x: number;
+  y: number;
+}
+
 interface EqualizingGridMatrixProps {
   items: ProjectItem[];
   minHeight?: number;
   variant?: 'featured' | 'opensource';
+  onHoverItem?: (item: ProjectItem | null, origin?: HoverOrigin) => void;
 }
 
 export const getGridMap = (count: number) => {
@@ -90,6 +96,7 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
   items,
   minHeight = 420,
   variant = 'featured',
+  onHoverItem,
 }) => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
@@ -109,20 +116,21 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
     }
   };
 
-  const gridStyle: any = Platform.OS === 'web'
-    ? {
-        display: 'grid',
-        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` ,
-        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` ,
-        gap: 12,
-        height: minHeight,
-        width: '100%',
-      }
-    : {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 12,
-      };
+  const gridStyle: any =
+    Platform.OS === 'web'
+      ? {
+          display: 'grid',
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+          gap: 12,
+          height: minHeight,
+          width: '100%',
+        }
+      : {
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: 12,
+        };
 
   return (
     <View style={styles.matrixWrapper}>
@@ -141,8 +149,22 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
             <Pressable
               key={idx}
               onPress={() => openUrl(item.url)}
-              onHoverIn={() => setHoveredId(idx)}
-              onHoverOut={() => setHoveredId(null)}
+              onHoverIn={(e: any) => {
+                setHoveredId(idx);
+                if (Platform.OS === 'web' && e?.currentTarget?.getBoundingClientRect) {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  onHoverItem?.(item, {
+                    x: Math.round(rect.left + rect.width / 2),
+                    y: Math.round(rect.top + rect.height / 2),
+                  });
+                } else {
+                  onHoverItem?.(item);
+                }
+              }}
+              onHoverOut={() => {
+                setHoveredId(null);
+                onHoverItem?.(null);
+              }}
               style={[
                 styles.matrixCell,
                 isOss && styles.matrixCellOss,
@@ -165,7 +187,6 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                     borderRadius: Math.round(size.boxSize * 0.3),
                   },
                   isHovered && styles.iconBoxHovered,
-                  isHovered && isOss && styles.iconBoxOssHovered,
                 ]}
               >
                 {item.iconUrl ? (
@@ -183,7 +204,10 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                 ) : isOss ? (
                   <GitFork size={size.iconSize} color="#34d399" />
                 ) : (
-                  <Sparkles size={size.iconSize} color={isBlue ? '#60a5fa' : theme.colors.primaryLight} />
+                  <Sparkles
+                    size={size.iconSize}
+                    color={isBlue ? '#60a5fa' : theme.colors.primaryLight}
+                  />
                 )}
               </View>
 
@@ -193,7 +217,12 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                   style={[
                     styles.cellTitle,
                     { fontSize: size.titleSize },
-                    isHovered && (isOss ? styles.cellTitleHoveredOss : isBlue ? styles.cellTitleHoveredBlue : styles.cellTitleHovered),
+                    isHovered &&
+                      (isOss
+                        ? styles.cellTitleHoveredOss
+                        : isBlue
+                        ? styles.cellTitleHoveredBlue
+                        : styles.cellTitleHovered),
                   ]}
                   numberOfLines={1}
                 >
@@ -258,18 +287,18 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   gridContainer: {
-    backgroundColor: 'rgba(18, 18, 22, 0.75)',
+    backgroundColor: 'rgba(18, 18, 22, 0.85)',
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     padding: 12,
   },
   gridContainerOss: {
-    backgroundColor: 'rgba(15, 17, 21, 0.7)',
+    backgroundColor: 'rgba(15, 17, 21, 0.85)',
     borderColor: 'rgba(52, 211, 153, 0.12)',
   },
   matrixCell: {
-    backgroundColor: 'rgba(26, 26, 32, 0.85)',
+    backgroundColor: '#1a1a20',
     borderRadius: 15,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.07)',
@@ -279,43 +308,31 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...(Platform.OS === 'web'
       ? ({
-          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'transform 0.16s ease-out, border-color 0.16s ease-out, background-color 0.16s ease-out',
+          willChange: 'transform',
           cursor: 'pointer',
-          backdropFilter: 'blur(8px)',
         } as any)
       : {}),
   },
   matrixCellOss: {
-    backgroundColor: 'rgba(20, 24, 28, 0.85)',
+    backgroundColor: '#14181c',
     borderColor: 'rgba(255, 255, 255, 0.06)',
   },
   matrixCellHovered: {
     borderColor: 'rgba(99, 102, 241, 0.65)',
-    backgroundColor: 'rgba(32, 32, 44, 0.95)',
+    backgroundColor: '#20202c',
     transform: [{ translateY: -2 }],
-    shadowColor: theme.colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 14,
   },
   matrixCellOssHovered: {
     borderColor: 'rgba(52, 211, 153, 0.6)',
-    backgroundColor: 'rgba(22, 30, 32, 0.95)',
-    shadowColor: '#10b981',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 14,
+    backgroundColor: '#161e20',
   },
   matrixCellBlue: {
     borderColor: 'rgba(59, 130, 246, 0.22)',
   },
   matrixCellBlueHovered: {
     borderColor: 'rgba(59, 130, 246, 0.75)',
-    backgroundColor: 'rgba(24, 32, 48, 0.95)',
-    shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.28,
-    shadowRadius: 14,
+    backgroundColor: '#182030',
   },
   iconBox: {
     backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -324,11 +341,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: 'rgba(99, 102, 241, 0.2)',
-    ...(Platform.OS === 'web'
-      ? ({
-          transition: 'all 0.2s ease',
-        } as any)
-      : {}),
   },
   iconBoxOss: {
     backgroundColor: 'rgba(16, 185, 129, 0.08)',
@@ -339,10 +351,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(59, 130, 246, 0.25)',
   },
   iconBoxHovered: {
-    transform: [{ scale: 1.06 }],
-  },
-  iconBoxOssHovered: {
-    transform: [{ scale: 1.06 }],
+    transform: [{ scale: 1.05 }],
   },
   cellContent: {
     alignItems: 'center',

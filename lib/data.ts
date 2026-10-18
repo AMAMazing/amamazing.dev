@@ -12,6 +12,7 @@ export interface ProjectItem {
   webUrl?: string;
   youtubeUrl?: string;
   bubblegeeName?: string;
+  released?: string;
 }
 
 export const navigationItems = [
@@ -179,20 +180,73 @@ export const desktopApps: ProjectItem[] = [
   }
 ];
 
+// Python Packages (Official Releases on PyPI)
 export const pythonPackages: ProjectItem[] = [
   {
-    title: 'yt-transcript',
-    emoji: '📜',
-    url: 'https://pypi.org/project/yt-transcript/',
-    description: 'Lightweight CLI and Python library to download YouTube transcripts with timing.',
-    category: 'Python Package'
+    title: 'talktollm',
+    emoji: '🤖',
+    url: 'https://pypi.org/project/talktollm/',
+    description: 'A Python utility for interacting with large language models (LLMs) via web automation',
+    category: 'LLM Automation',
+    released: 'Sep 16, 2026',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/talktollm.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/talktollm/' }
+    ]
   },
   {
-    title: 'ama-code',
-    emoji: '💻',
-    url: 'https://pypi.org/project/ama-code/',
-    description: 'Coding assistant CLI integrating with LLMs for real-time refactoring.',
-    category: 'Python Package'
+    title: 'optimisewait',
+    emoji: '👁️',
+    url: 'https://pypi.org/project/optimisewait/',
+    description: 'A Python utility for automated image detection and clicking',
+    category: 'Computer Vision',
+    released: 'Sep 16, 2026',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/optimisewait.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/optimisewait/' }
+    ]
+  },
+  {
+    title: 'upload-socials',
+    emoji: '📹',
+    url: 'https://pypi.org/project/upload-socials/',
+    description: 'A Python library to automate video uploads to YouTube.',
+    category: 'YouTube API',
+    released: 'Jun 19, 2026',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/upload-socials.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/upload-socials/' }
+    ]
+  },
+  {
+    title: 'smartzoom',
+    emoji: '🔍',
+    url: 'https://pypi.org/project/smartzoom/',
+    description: 'A Python utility to automatically apply a smooth, continuous zoom to a video, perfectly framing its content.',
+    category: 'Video Utility',
+    released: 'Jul 13, 2025',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/smartzoom.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/smartzoom/' }
+    ]
+  },
+  {
+    title: 'smartpaste',
+    emoji: '📋',
+    url: 'https://pypi.org/project/smartpaste/',
+    description: 'Reliable cross-platform clipboard pasting for Python.',
+    category: 'Clipboard Tool',
+    released: 'Apr 10, 2025',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/smartpaste.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/smartpaste/' }
+    ]
+  },
+  {
+    title: 'pacetype',
+    emoji: '⌨️',
+    url: 'https://pypi.org/project/pacetype/',
+    description: 'Type text and emojis character-by-character using clipboard paste.',
+    category: 'Input Automation',
+    released: 'Apr 5, 2025',
+    badges: [
+      { src: 'https://img.shields.io/pypi/v/pacetype.svg', alt: 'PyPI Version', url: 'https://pypi.org/project/pacetype/' }
+    ]
   }
 ];
 
@@ -231,25 +285,5 @@ export const chromeExtensions: ProjectItem[] = [
 ];
 
 export const generateMarkdown = (): string => {
-  return `# AMAMazing.Dev Portfolio
-
-## Featured Projects (Core)
-` + featuredProjects.map((p) => `- **${p.title}** (${p.category}): ${p.description} [Link](${p.url})`).join('\n') + `
-
-## Open Source Contributions
-
-### Web Applications
-` + webApps.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `
-
-### Desktop Applications
-` + desktopApps.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `
-
-### Python Packages
-` + pythonPackages.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `
-
-### NPM Packages
-` + npmPackages.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `
-
-### Chrome Extensions
-` + chromeExtensions.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n');
+  return `# AMAMazing.Dev Portfolio\n\n## Featured Projects (Core)\n` + featuredProjects.map((p) => `- **${p.title}** (${p.category}): ${p.description} [Link](${p.url})`).join('\n') + `\n\n## Open Source Contributions\n\n### Web Applications\n` + webApps.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `\n\n### Desktop Applications\n` + desktopApps.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `\n\n### Python Packages\n` + pythonPackages.map((p) => `- **${p.title}**: ${p.description} (${p.released || ''}) [Link](${p.url})`).join('\n') + `\n\n### NPM Packages\n` + npmPackages.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n') + `\n\n### Chrome Extensions\n` + chromeExtensions.map((p) => `- **${p.title}**: ${p.description} [Link](${p.url})`).join('\n');
 };
