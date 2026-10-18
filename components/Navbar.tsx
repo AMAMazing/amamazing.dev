@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, ScrollView } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
-import { Code2, Compass } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
 import { theme } from '../lib/theme';
 import { navigationItems } from '../lib/data';
 
@@ -12,21 +11,11 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) => {
   const router = useRouter();
-  const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const handleNavPress = (item: { name: string; href: string; id: string }) => {
-    if (item.href === '/blog') {
-      router.push('/blog');
-    } else if (item.href.startsWith('#')) {
-      if (pathname !== '/') {
-        router.push('/');
-        setTimeout(() => {
-          if (onNavigateSection) {
-            onNavigateSection(item.id);
-          }
-        }, 100);
-      } else if (onNavigateSection) {
+    if (item.href.startsWith('#')) {
+      if (onNavigateSection) {
         onNavigateSection(item.id);
       }
     }
@@ -37,13 +26,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
       <View style={styles.container}>
         {/* Brand Logo */}
         <Pressable
-          onPress={() => router.push('/')}
+          onPress={() => {
+            if (onNavigateSection) {
+              onNavigateSection('top');
+            }
+          }}
           style={styles.logoContainer}
         >
           <Text style={styles.logoPrefix}>AMA</Text>
           <Text style={styles.logoAccent}>Mazing</Text>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>EXPO</Text>
+            <Text style={styles.badgeText}>DEV</Text>
           </View>
         </Pressable>
 
@@ -56,7 +49,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
         >
           {navigationItems.map((item) => {
             const isHovered = hoveredItem === item.name;
-            const isBlog = item.name === 'Blog' && pathname.startsWith('/blog');
             return (
               <Pressable
                 key={item.name}
@@ -65,13 +57,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
                 onHoverOut={() => setHoveredItem(null)}
                 style={[
                   styles.navLink,
-                  (isHovered || isBlog) && styles.navLinkActive,
+                  isHovered && styles.navLinkHovered,
                 ]}
               >
                 <Text
                   style={[
                     styles.navLinkText,
-                    (isHovered || isBlog) && styles.navLinkTextActive,
+                    isHovered && styles.navLinkTextHovered,
                   ]}
                 >
                   {item.name}
@@ -80,25 +72,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
             );
           })}
 
+          {/* Raw Markdown view button */}
           {onOpenRaw ? (
             <Pressable
               onPress={onOpenRaw}
-              onHoverIn={() => setHoveredItem('raw')}
-              onHoverOut={() => setHoveredItem(null)}
-              style={[
-                styles.rawButton,
-                hoveredItem === 'raw' && styles.rawButtonHovered,
-              ]}
+              style={styles.rawButton}
             >
-              <Code2 size={14} color={hoveredItem === 'raw' ? '#ffffff' : theme.colors.textMuted} />
-              <Text
-                style={[
-                  styles.rawButtonText,
-                  hoveredItem === 'raw' && styles.rawButtonTextHovered,
-                ]}
-              >
-                Raw
-              </Text>
+              <Text style={styles.rawButtonText}>Raw .md</Text>
             </Pressable>
           ) : null}
         </ScrollView>
@@ -109,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
 
 const styles = StyleSheet.create({
   navWrapper: {
-    backgroundColor: 'rgba(18, 18, 18, 0.92)',
+    backgroundColor: 'rgba(10, 10, 12, 0.85)',
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
     zIndex: 50,
@@ -146,7 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '800',
     color: theme.colors.primaryLight,
-    letterSpacing: -0.5,
   },
   badge: {
     backgroundColor: 'rgba(99, 102, 241, 0.2)',
@@ -176,7 +155,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: theme.radii.sm,
   },
-  navLinkActive: {
+  navLinkHovered: {
     backgroundColor: theme.colors.backgroundElevated,
   },
   navLinkText: {
@@ -184,7 +163,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.colors.textSecondary,
   },
-  navLinkTextActive: {
+  navLinkTextHovered: {
     color: '#ffffff',
   },
   rawButton: {
@@ -198,16 +177,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.border,
     marginLeft: 6,
   },
-  rawButtonHovered: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
-  },
   rawButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: theme.colors.textMuted,
-  },
-  rawButtonTextHovered: {
-    color: '#ffffff',
+    color: theme.colors.primaryLight,
   },
 });

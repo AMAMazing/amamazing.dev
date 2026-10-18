@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform, Linking, Image } from 'react-native';
-import { Heart, Sparkles, ArrowRight, Github } from 'lucide-react-native';
+import { View, Text, StyleSheet, Pressable, Platform, Linking } from 'react-native';
+import { Heart, ArrowRight, Github, Sparkles } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 
 interface HeroSectionProps {
   onExploreProjects?: () => void;
-  onReadBlog?: () => void;
-  latestPostTitle?: string;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({
-  onExploreProjects,
-  onReadBlog,
-  latestPostTitle,
-}) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreProjects }) => {
   const [bobaHovered, setBobaHovered] = useState(false);
-  const [blogHovered, setBlogHovered] = useState(false);
+  const [exploreHovered, setExploreHovered] = useState(false);
 
   const openUrl = (url: string) => {
     if (Platform.OS === 'web') {
@@ -27,27 +21,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <View style={styles.container}>
-      {/* Glow Accent Element */}
       <View style={styles.glowAura} />
 
-      {/* Main Hero Card */}
       <View style={styles.heroCard}>
-        {/* Top Status Pill */}
         <View style={styles.statusPill}>
           <View style={styles.statusDot} />
           <Text style={styles.statusText}>Open for Collaborations & Building Cool Tools</Text>
         </View>
 
-        {/* Headline */}
         <Text style={styles.greeting}>
-          Hi there, I'm <Text style={styles.nameHighlight}>AMAMazing</Text> 👋
+          Hi there, I'm <Text style={styles.nameHighlight}>AMAMazing</Text> ✨
         </Text>
 
         <Text style={styles.description}>
-          Software engineer crafting high-impact developer utilities, web applications, open-source Python packages, and cross-platform experiences.
+          Master developer umbrella & daily operating system. Crafting modern digital tools, SaaS & WaaS ecosystems, and open source projects.
         </Text>
 
-        {/* Action Buttons Row */}
         <View style={styles.actionsRow}>
           <Pressable
             onPress={() => openUrl('https://www.buymeaboba.com/')}
@@ -66,24 +55,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <Github size={16} color={theme.colors.text} />
             <Text style={styles.secondaryButtonText}>GitHub Profile</Text>
           </Pressable>
-        </View>
 
-        {/* Latest Post Spotlight Banner */}
-        {latestPostTitle ? (
-          <Pressable
-            onPress={onReadBlog}
-            onHoverIn={() => setBlogHovered(true)}
-            onHoverOut={() => setBlogHovered(false)}
-            style={[styles.spotlightBanner, blogHovered && styles.spotlightBannerHovered]}
-          >
-            <View style={styles.spotlightIcon}>
-              <Sparkles size={14} color={theme.colors.primaryLight} />
-            </View>
-            <Text style={styles.spotlightLabel}>Latest Post:</Text>
-            <Text style={styles.spotlightTitle} numberOfLines={1}>{latestPostTitle}</Text>
-            <ArrowRight size={14} color={blogHovered ? theme.colors.primaryLight : theme.colors.textMuted} />
-          </Pressable>
-        ) : null}
+          {onExploreProjects ? (
+            <Pressable
+              onPress={onExploreProjects}
+              onHoverIn={() => setExploreHovered(true)}
+              onHoverOut={() => setExploreHovered(false)}
+              style={[styles.outlineButton, exploreHovered && styles.outlineButtonHovered]}
+            >
+              <Sparkles size={16} color={exploreHovered ? '#ffffff' : theme.colors.primaryLight} />
+              <Text style={[styles.outlineButtonText, exploreHovered && styles.outlineButtonTextHovered]}>
+                Explore Featured Projects
+              </Text>
+              <ArrowRight size={14} color={exploreHovered ? '#ffffff' : theme.colors.primaryLight} />
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     </View>
   );
@@ -156,7 +143,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginBottom: theme.spacing.lg,
   },
   primaryButton: {
     flexDirection: 'row',
@@ -192,39 +178,27 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  spotlightBanner: {
+  outlineButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(30, 30, 36, 0.9)',
+    backgroundColor: 'rgba(99, 102, 241, 0.08)',
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderColor: 'rgba(99, 102, 241, 0.3)',
+    paddingHorizontal: 18,
+    paddingVertical: 12,
     borderRadius: theme.radii.md,
-    marginTop: theme.spacing.xs,
   },
-  spotlightBannerHovered: {
+  outlineButtonHovered: {
+    backgroundColor: theme.colors.primary,
     borderColor: theme.colors.primary,
-    backgroundColor: theme.colors.backgroundElevated,
   },
-  spotlightIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  spotlightLabel: {
-    fontSize: 12,
-    fontWeight: '700',
+  outlineButtonText: {
     color: theme.colors.primaryLight,
+    fontSize: 14,
+    fontWeight: '600',
   },
-  spotlightTitle: {
-    fontSize: 13,
-    color: theme.colors.text,
-    fontWeight: '500',
-    flex: 1,
+  outlineButtonTextHovered: {
+    color: '#ffffff',
   },
 });
