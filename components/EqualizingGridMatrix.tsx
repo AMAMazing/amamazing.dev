@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, Linking, Image } from 'react-native';
-import { ExternalLink, Sparkles } from 'lucide-react-native';
+import { ExternalLink, Sparkles, GitFork } from 'lucide-react-native';
 import { ProjectItem } from '../lib/data';
 import { theme } from '../lib/theme';
 
 interface EqualizingGridMatrixProps {
   items: ProjectItem[];
   minHeight?: number;
+  variant?: 'featured' | 'opensource';
 }
 
 export const getGridMap = (count: number) => {
@@ -42,26 +43,26 @@ export const getGridMap = (count: number) => {
 export const getSizeConfig = (cols: number, count: number) => {
   if (count === 1) {
     return {
-      iconSize: 52,
-      boxSize: 88,
-      titleSize: 22,
-      categorySize: 13,
-      padding: 24,
+      iconSize: 44,
+      boxSize: 76,
+      titleSize: 20,
+      categorySize: 12,
+      padding: 22,
     };
   }
   if (count <= 4) {
     return {
-      iconSize: 36,
-      boxSize: 68,
-      titleSize: 16,
+      iconSize: 32,
+      boxSize: 60,
+      titleSize: 15,
       categorySize: 11,
-      padding: 18,
+      padding: 16,
     };
   }
   if (cols >= 7) {
     return {
-      iconSize: 22,
-      boxSize: 42,
+      iconSize: 20,
+      boxSize: 38,
       titleSize: 11,
       categorySize: 9,
       padding: 8,
@@ -69,18 +70,18 @@ export const getSizeConfig = (cols: number, count: number) => {
   }
   if (count <= 9) {
     return {
-      iconSize: 30,
-      boxSize: 56,
-      titleSize: 15,
+      iconSize: 28,
+      boxSize: 52,
+      titleSize: 14,
       categorySize: 10,
       padding: 14,
     };
   }
   return {
-    iconSize: 24,
-    boxSize: 46,
-    titleSize: 13,
-    categorySize: 10,
+    iconSize: 22,
+    boxSize: 42,
+    titleSize: 12,
+    categorySize: 9,
     padding: 10,
   };
 };
@@ -88,12 +89,14 @@ export const getSizeConfig = (cols: number, count: number) => {
 export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
   items,
   minHeight = 420,
+  variant = 'featured',
 }) => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const count = items.length;
   if (count === 0) return null;
 
+  const isOss = variant === 'opensource';
   const { c: cols, r: rows } = getGridMap(count);
   const size = getSizeConfig(cols, count);
 
@@ -109,8 +112,8 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
   const gridStyle: any = Platform.OS === 'web'
     ? {
         display: 'grid',
-        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` ,
+        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))` ,
         gap: 12,
         height: minHeight,
         width: '100%',
@@ -123,7 +126,13 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
 
   return (
     <View style={styles.matrixWrapper}>
-      <View style={[styles.gridContainer, gridStyle]}>
+      <View
+        style={[
+          styles.gridContainer,
+          isOss && styles.gridContainerOss,
+          gridStyle,
+        ]}
+      >
         {items.map((item, idx) => {
           const isHovered = hoveredId === idx;
           const isBlue = item.isAAdsMaximizing;
@@ -136,23 +145,27 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
               onHoverOut={() => setHoveredId(null)}
               style={[
                 styles.matrixCell,
+                isOss && styles.matrixCellOss,
                 { padding: size.padding },
                 isHovered && styles.matrixCellHovered,
+                isHovered && isOss && styles.matrixCellOssHovered,
                 isBlue && styles.matrixCellBlue,
                 isHovered && isBlue && styles.matrixCellBlueHovered,
               ]}
             >
-              {/* Sleek Tile Icon Box */}
+              {/* Tile Icon Box */}
               <View
                 style={[
                   styles.iconBox,
+                  isOss && styles.iconBoxOss,
                   isBlue && styles.iconBoxBlue,
                   {
                     width: size.boxSize,
                     height: size.boxSize,
-                    borderRadius: Math.round(size.boxSize * 0.32),
+                    borderRadius: Math.round(size.boxSize * 0.3),
                   },
                   isHovered && styles.iconBoxHovered,
+                  isHovered && isOss && styles.iconBoxOssHovered,
                 ]}
               >
                 {item.iconUrl ? (
@@ -167,18 +180,20 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                   />
                 ) : item.emoji ? (
                   <Text style={{ fontSize: size.iconSize }}>{item.emoji}</Text>
+                ) : isOss ? (
+                  <GitFork size={size.iconSize} color="#34d399" />
                 ) : (
                   <Sparkles size={size.iconSize} color={isBlue ? '#60a5fa' : theme.colors.primaryLight} />
                 )}
               </View>
 
-              {/* Title & Subtle Pill Tag */}
+              {/* Title & Category Tag */}
               <View style={styles.cellContent}>
                 <Text
                   style={[
                     styles.cellTitle,
                     { fontSize: size.titleSize },
-                    isHovered && (isBlue ? styles.cellTitleHoveredBlue : styles.cellTitleHovered),
+                    isHovered && (isOss ? styles.cellTitleHoveredOss : isBlue ? styles.cellTitleHoveredBlue : styles.cellTitleHovered),
                   ]}
                   numberOfLines={1}
                 >
@@ -189,6 +204,7 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                   <View
                     style={[
                       styles.categoryTag,
+                      isOss && styles.categoryTagOss,
                       isBlue && styles.categoryTagBlue,
                       isHovered && styles.categoryTagHovered,
                     ]}
@@ -197,6 +213,7 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                       style={[
                         styles.categoryTagText,
                         { fontSize: size.categorySize },
+                        isOss && styles.categoryTagTextOss,
                         isBlue && styles.categoryTagTextBlue,
                       ]}
                       numberOfLines={1}
@@ -215,8 +232,16 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                 ]}
               >
                 <ExternalLink
-                  size={13}
-                  color={isHovered ? (isBlue ? '#93c5fd' : theme.colors.primaryLight) : 'rgba(255, 255, 255, 0.22)'}
+                  size={12}
+                  color={
+                    isHovered
+                      ? isOss
+                        ? '#6ee7b7'
+                        : isBlue
+                        ? '#93c5fd'
+                        : theme.colors.primaryLight
+                      : 'rgba(255, 255, 255, 0.18)'
+                  }
                 />
               </View>
             </Pressable>
@@ -233,48 +258,64 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   gridContainer: {
-    backgroundColor: 'rgba(14, 14, 18, 0.65)',
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.07)',
-    padding: 12,
-  },
-  matrixCell: {
-    backgroundColor: 'rgba(24, 24, 30, 0.8)',
-    borderRadius: 16,
+    backgroundColor: 'rgba(18, 18, 22, 0.75)',
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
+    padding: 12,
+  },
+  gridContainerOss: {
+    backgroundColor: 'rgba(15, 17, 21, 0.7)',
+    borderColor: 'rgba(52, 211, 153, 0.12)',
+  },
+  matrixCell: {
+    backgroundColor: 'rgba(26, 26, 32, 0.85)',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.07)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
     overflow: 'hidden',
     ...(Platform.OS === 'web'
       ? ({
-          transition: 'all 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           cursor: 'pointer',
           backdropFilter: 'blur(8px)',
         } as any)
       : {}),
   },
+  matrixCellOss: {
+    backgroundColor: 'rgba(20, 24, 28, 0.85)',
+    borderColor: 'rgba(255, 255, 255, 0.06)',
+  },
   matrixCellHovered: {
     borderColor: 'rgba(99, 102, 241, 0.65)',
     backgroundColor: 'rgba(32, 32, 44, 0.95)',
-    transform: [{ translateY: -3 }],
+    transform: [{ translateY: -2 }],
     shadowColor: theme.colors.primary,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
+  },
+  matrixCellOssHovered: {
+    borderColor: 'rgba(52, 211, 153, 0.6)',
+    backgroundColor: 'rgba(22, 30, 32, 0.95)',
+    shadowColor: '#10b981',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 14,
   },
   matrixCellBlue: {
     borderColor: 'rgba(59, 130, 246, 0.22)',
   },
   matrixCellBlueHovered: {
-    borderColor: 'rgba(59, 130, 246, 0.8)',
+    borderColor: 'rgba(59, 130, 246, 0.75)',
     backgroundColor: 'rgba(24, 32, 48, 0.95)',
     shadowColor: '#3b82f6',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.32,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.28,
+    shadowRadius: 14,
   },
   iconBox: {
     backgroundColor: 'rgba(99, 102, 241, 0.1)',
@@ -282,19 +323,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.25)',
+    borderColor: 'rgba(99, 102, 241, 0.2)',
     ...(Platform.OS === 'web'
       ? ({
-          transition: 'all 0.22s ease',
+          transition: 'all 0.2s ease',
         } as any)
       : {}),
   },
+  iconBoxOss: {
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderColor: 'rgba(52, 211, 153, 0.22)',
+  },
   iconBoxBlue: {
-    backgroundColor: 'rgba(59, 130, 246, 0.12)',
-    borderColor: 'rgba(59, 130, 246, 0.3)',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba(59, 130, 246, 0.25)',
   },
   iconBoxHovered: {
-    transform: [{ scale: 1.08 }, { rotate: '-2deg' }],
+    transform: [{ scale: 1.06 }],
+  },
+  iconBoxOssHovered: {
+    transform: [{ scale: 1.06 }],
   },
   cellContent: {
     alignItems: 'center',
@@ -305,7 +353,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ffffff',
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 5,
     letterSpacing: -0.2,
   },
   cellTitleHovered: {
@@ -314,17 +362,24 @@ const styles = StyleSheet.create({
   cellTitleHoveredBlue: {
     color: '#93c5fd',
   },
+  cellTitleHoveredOss: {
+    color: '#6ee7b7',
+  },
   categoryTag: {
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 2.5,
     borderRadius: theme.radii.full,
   },
+  categoryTagOss: {
+    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+    borderColor: 'rgba(52, 211, 153, 0.2)',
+  },
   categoryTagBlue: {
-    backgroundColor: 'rgba(59, 130, 246, 0.12)',
-    borderColor: 'rgba(59, 130, 246, 0.25)',
+    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+    borderColor: 'rgba(59, 130, 246, 0.2)',
   },
   categoryTagHovered: {
     borderColor: 'rgba(255, 255, 255, 0.2)',
@@ -333,17 +388,20 @@ const styles = StyleSheet.create({
     color: theme.colors.textMuted,
     fontWeight: '600',
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.5,
+  },
+  categoryTagTextOss: {
+    color: '#6ee7b7',
   },
   categoryTagTextBlue: {
     color: '#93c5fd',
   },
   cornerAction: {
     position: 'absolute',
-    top: 9,
-    right: 9,
-    padding: 4,
-    borderRadius: 6,
+    top: 8,
+    right: 8,
+    padding: 3,
+    borderRadius: 5,
   },
   cornerActionHovered: {
     backgroundColor: 'rgba(255, 255, 255, 0.08)',

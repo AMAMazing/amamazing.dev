@@ -6,7 +6,7 @@ import {
   ScrollView,
   useWindowDimensions,
 } from 'react-native';
-import { GitFork } from 'lucide-react-native';
+import { GitFork, Sparkles, Terminal } from 'lucide-react-native';
 import { Navbar } from '../components/Navbar';
 import { HeroSection } from '../components/HeroSection';
 import { SectionHeader } from '../components/SectionHeader';
@@ -63,96 +63,98 @@ export default function HomeScreen() {
             onExploreProjects={() => scrollToSection('featured')}
           />
 
-          {/* Featured Projects (9 Core Closed-Source Projects) */}
+          {/* Featured Projects (9 Core Flagship Projects) */}
           <View
             onLayout={(e: any) => handleLayoutSection('featured', e.nativeEvent.layout.y)}
+            style={styles.sectionSpacing}
           >
             <SectionHeader
               emoji="⭐"
               title="Featured Projects"
               subtitle="Core flagships across web operating systems, creator tools, and media platforms"
             />
-            <EqualizingGridMatrix items={featuredProjects} minHeight={460} />
+            <EqualizingGridMatrix items={featuredProjects} minHeight={450} variant="featured" />
           </View>
 
-          {/* Open Source Community Contributions Banner */}
+          {/* Elegant Open Source Divider & Section Intro */}
           <View
             onLayout={(e: any) => handleLayoutSection('open-source', e.nativeEvent.layout.y)}
-            style={styles.openSourceBanner}
+            style={styles.ossDividerWrapper}
           >
-            <View style={styles.openSourceIconCircle}>
-              <GitFork size={22} color={theme.colors.primaryLight} />
-            </View>
-            <View style={styles.openSourceTextContainer}>
-              <View style={styles.openSourceTagRow}>
-                <Text style={styles.openSourceBadge}>OPEN SOURCE</Text>
-                <Text style={styles.openSourceSubBadge}>Free & Public Community Projects</Text>
+            <View style={styles.ossDividerLine} />
+            <View style={styles.ossPillContainer}>
+              <View style={styles.ossPillBadge}>
+                <GitFork size={13} color="#34d399" />
+                <Text style={styles.ossPillText}>OPEN SOURCE COMMUNITY WORK</Text>
               </View>
-              <Text style={styles.openSourceHeading}>
-                Open Source Community Contributions
-              </Text>
-              <Text style={styles.openSourceDescription}>
-                Everything below consists of my personal open-source projects, community packages, web tools, and browser extensions.
-              </Text>
             </View>
+            <View style={styles.ossDividerLine} />
           </View>
+
+          <Text style={styles.ossIntroDescription}>
+            Public utilities, developer packages, and community contributions built by AMAMazing
+          </Text>
 
           {/* Web Applications (Open Source) */}
           <View
             onLayout={(e: any) => handleLayoutSection('web-apps', e.nativeEvent.layout.y)}
+            style={styles.sectionSpacing}
           >
             <SectionHeader
               emoji="🌐"
               title="Web Applications"
               subtitle="Open-source browser utilities, transit systems, and game sandboxes"
             />
-            <EqualizingGridMatrix items={webApps} minHeight={240} />
+            <EqualizingGridMatrix items={webApps} minHeight={240} variant="opensource" />
           </View>
 
           {/* Desktop Applications (Open Source) */}
           <View
             onLayout={(e: any) => handleLayoutSection('desktop-apps', e.nativeEvent.layout.y)}
+            style={styles.sectionSpacing}
           >
             <SectionHeader
               emoji="💻"
               title="Desktop Applications"
               subtitle="Open-source local dev servers and desktop automation utilities"
             />
-            <EqualizingGridMatrix items={desktopApps} minHeight={220} />
+            <EqualizingGridMatrix items={desktopApps} minHeight={220} variant="opensource" />
           </View>
 
           {/* Python Packages (Open Source) */}
           <View
             onLayout={(e: any) => handleLayoutSection('packages', e.nativeEvent.layout.y)}
+            style={styles.sectionSpacing}
           >
             <SectionHeader
-              emoji="�"
+              emoji="🐍"
               title="Python Packages"
               subtitle="Open-source libraries published on PyPI for developers"
             />
-            <EqualizingGridMatrix items={pythonPackages} minHeight={220} />
+            <EqualizingGridMatrix items={pythonPackages} minHeight={220} variant="opensource" />
           </View>
 
           {/* NPM Packages (Open Source) */}
-          <View>
+          <View style={styles.sectionSpacing}>
             <SectionHeader
               emoji="📦"
               title="NPM Packages"
               subtitle="Developer scaffolding and starter CLI boilerplates"
             />
-            <EqualizingGridMatrix items={npmPackages} minHeight={180} />
+            <EqualizingGridMatrix items={npmPackages} minHeight={180} variant="opensource" />
           </View>
 
           {/* Chrome Extensions (Open Source) */}
           <View
             onLayout={(e: any) => handleLayoutSection('extensions', e.nativeEvent.layout.y)}
+            style={styles.sectionSpacing}
           >
             <SectionHeader
               emoji="🧩"
               title="Chrome Extensions"
               subtitle="Open-source productivity and streaming browser extensions"
             />
-            <EqualizingGridMatrix items={chromeExtensions} minHeight={220} />
+            <EqualizingGridMatrix items={chromeExtensions} minHeight={220} variant="opensource" />
           </View>
 
           {/* Stats Bar */}
@@ -166,7 +168,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>13+</Text>
+              <Text style={[styles.statNumber, { color: '#34d399' }]}>13+</Text>
               <Text style={styles.statLabel}>Open Source Releases</Text>
             </View>
             <View style={styles.statDivider} />
@@ -206,58 +208,46 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 20,
   },
-  openSourceBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    backgroundColor: 'rgba(99, 102, 241, 0.08)',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.25)',
-    padding: 20,
-    marginTop: theme.spacing.xl,
+  sectionSpacing: {
     marginBottom: theme.spacing.lg,
   },
-  openSourceIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(99, 102, 241, 0.15)',
-    justifyContent: 'center',
+  ossDividerWrapper: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
+    marginVertical: theme.spacing.xl,
+    gap: 16,
   },
-  openSourceTextContainer: {
+  ossDividerLine: {
     flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(52, 211, 153, 0.25)',
   },
-  openSourceTagRow: {
+  ossPillContainer: {
+    alignItems: 'center',
+  },
+  ossPillBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 4,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(52, 211, 153, 0.35)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: theme.radii.full,
   },
-  openSourceBadge: {
-    fontSize: 10,
+  ossPillText: {
+    fontSize: 11,
     fontWeight: '800',
-    color: theme.colors.primaryLight,
+    color: '#34d399',
     letterSpacing: 0.8,
   },
-  openSourceSubBadge: {
-    fontSize: 12,
-    color: theme.colors.textMuted,
-  },
-  openSourceHeading: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#ffffff',
-    letterSpacing: -0.3,
-    marginBottom: 2,
-  },
-  openSourceDescription: {
-    fontSize: 13,
+  ossIntroDescription: {
+    fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 18,
+    textAlign: 'center',
+    marginBottom: theme.spacing.xl,
+    marginTop: -theme.spacing.sm,
   },
   statsCard: {
     backgroundColor: theme.colors.card,
@@ -268,7 +258,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginVertical: theme.spacing.xxl,
+    marginVertical: theme.spacing.xl,
   },
   statItem: {
     alignItems: 'center',
