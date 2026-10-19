@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { theme } from '../lib/theme';
 import { navigationItems } from '../lib/data';
 
@@ -10,42 +16,35 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) => {
-  const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const [rawHovered, setRawHovered] = useState(false);
 
   const handleNavPress = (item: { name: string; href: string; id: string }) => {
-    if (item.href.startsWith('#')) {
-      if (onNavigateSection) {
-        onNavigateSection(item.id);
-      }
+    if (item.href.startsWith('#') && onNavigateSection) {
+      onNavigateSection(item.id);
     }
   };
 
   return (
-    <View style={styles.navWrapper}>
-      <View style={styles.container}>
-        {/* Brand Logo */}
+    <View style={styles.navOuter}>
+      <View style={styles.navPillBar}>
+        {/* Minimal Brand Wordmark */}
         <Pressable
-          onPress={() => {
-            if (onNavigateSection) {
-              onNavigateSection('top');
-            }
-          }}
-          style={styles.logoContainer}
+          onPress={() => onNavigateSection?.('top')}
+          style={styles.brandButton}
         >
-          <Text style={styles.logoPrefix}>AMA</Text>
-          <Text style={styles.logoAccent}>Mazing</Text>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>DEV</Text>
-          </View>
+          <View style={styles.brandStatusDot} />
+          <Text style={styles.brandWordmark}>
+            AMA<Text style={styles.brandAccent}>Mazing</Text>
+          </Text>
         </Pressable>
 
-        {/* Navigation Items */}
+        {/* Clean Typographic Links */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.navItemsList}
-          style={styles.navScroll}
+          contentContainerStyle={styles.linksRow}
+          style={styles.linksScroll}
         >
           {navigationItems.map((item) => {
             const isHovered = hoveredItem === item.name;
@@ -55,15 +54,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
                 onPress={() => handleNavPress(item)}
                 onHoverIn={() => setHoveredItem(item.name)}
                 onHoverOut={() => setHoveredItem(null)}
-                style={[
-                  styles.navLink,
-                  isHovered && styles.navLinkHovered,
-                ]}
+                style={[styles.linkItem, isHovered && styles.linkItemHovered]}
               >
                 <Text
                   style={[
-                    styles.navLinkText,
-                    isHovered && styles.navLinkTextHovered,
+                    styles.linkText,
+                    isHovered && styles.linkTextHovered,
                   ]}
                 >
                   {item.name}
@@ -71,115 +67,137 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenRaw, onNavigateSection }) 
               </Pressable>
             );
           })}
-
-          {/* Raw Markdown view button */}
-          {onOpenRaw ? (
-            <Pressable
-              onPress={onOpenRaw}
-              style={styles.rawButton}
-            >
-              <Text style={styles.rawButtonText}>Raw .md</Text>
-            </Pressable>
-          ) : null}
         </ScrollView>
+
+        {/* Minimal Monospace Raw Trigger */}
+        {onOpenRaw ? (
+          <Pressable
+            onPress={onOpenRaw}
+            onHoverIn={() => setRawHovered(true)}
+            onHoverOut={() => setRawHovered(false)}
+            style={[styles.rawBtn, rawHovered && styles.rawBtnHovered]}
+          >
+            <Text style={[styles.rawBtnText, rawHovered && styles.rawBtnTextHovered]}>
+              raw.md
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  navWrapper: {
-    backgroundColor: 'rgba(10, 10, 12, 0.85)',
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-    zIndex: 50,
+  navOuter: {
+    zIndex: 100,
+    paddingHorizontal: 22,
+    paddingTop: 16,
+    paddingBottom: 8,
     ...(Platform.OS === 'web'
       ? ({
           position: 'sticky',
           top: 0,
-          backdropFilter: 'blur(12px)',
         } as any)
       : {}),
   },
-  container: {
-    maxWidth: 1200,
+  navPillBar: {
+    maxWidth: 1176,
     width: '100%',
     alignSelf: 'center',
-    paddingHorizontal: 20,
-    height: 64,
+    height: 54,
+    paddingHorizontal: 18,
+    borderRadius: 999,
+    backgroundColor: 'rgba(12, 12, 16, 0.72)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.07)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 16,
+    ...(Platform.OS === 'web'
+      ? ({
+          backdropFilter: 'blur(16px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(160%)',
+        } as any)
+      : {}),
   },
-  logoContainer: {
+  brandButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 20,
+    gap: 9,
+    paddingVertical: 4,
   },
-  logoPrefix: {
-    fontSize: 20,
+  brandStatusDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#818cf8',
+  },
+  brandWordmark: {
+    fontSize: 16,
     fontWeight: '800',
     color: '#ffffff',
     letterSpacing: -0.5,
   },
-  logoAccent: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: theme.colors.primaryLight,
+  brandAccent: {
+    color: '#a5b4fc',
+    fontWeight: '500',
   },
-  badge: {
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginLeft: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.4)',
-  },
-  badgeText: {
-    color: theme.colors.primaryLight,
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  navScroll: {
+  linksScroll: {
     flexGrow: 0,
+    flexShrink: 1,
   },
-  navItemsList: {
+  linksRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 2,
   },
-  navLink: {
+  linkItem: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: theme.radii.sm,
+    borderRadius: 999,
+    ...(Platform.OS === 'web'
+      ? ({
+          transition: 'all 0.15s ease',
+        } as any)
+      : {}),
   },
-  navLinkHovered: {
-    backgroundColor: theme.colors.backgroundElevated,
+  linkItemHovered: {
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
-  navLinkText: {
+  linkText: {
     fontSize: 13,
     fontWeight: '500',
-    color: theme.colors.textSecondary,
+    color: '#94a3b8',
+    letterSpacing: -0.1,
   },
-  navLinkTextHovered: {
+  linkTextHovered: {
     color: '#ffffff',
   },
-  rawButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: theme.radii.sm,
+  rawBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    marginLeft: 6,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    ...(Platform.OS === 'web'
+      ? ({
+          transition: 'all 0.15s ease',
+        } as any)
+      : {}),
   },
-  rawButtonText: {
-    fontSize: 12,
+  rawBtnHovered: {
+    backgroundColor: 'rgba(129, 140, 248, 0.14)',
+    borderColor: 'rgba(129, 140, 248, 0.4)',
+  },
+  rawBtnText: {
+    fontSize: 11.5,
     fontWeight: '600',
-    color: theme.colors.primaryLight,
+    color: '#94a3b8',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  rawBtnTextHovered: {
+    color: '#c7d2fe',
   },
 });

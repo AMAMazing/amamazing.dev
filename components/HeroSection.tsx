@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform, Linking } from 'react-native';
-import { Heart, ArrowRight, Github, Sparkles } from 'lucide-react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Platform,
+  Linking,
+  useWindowDimensions,
+} from 'react-native';
+import { Heart, ArrowDownRight, Github } from 'lucide-react-native';
 import { theme } from '../lib/theme';
 
 interface HeroSectionProps {
@@ -8,8 +16,12 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreProjects }) => {
-  const [bobaHovered, setBobaHovered] = useState(false);
+  const { width } = useWindowDimensions();
+  const isMobile = width < 640;
+
   const [exploreHovered, setExploreHovered] = useState(false);
+  const [bobaHovered, setBobaHovered] = useState(false);
+  const [githubHovered, setGithubHovered] = useState(false);
 
   const openUrl = (url: string) => {
     if (Platform.OS === 'web') {
@@ -20,185 +32,260 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onExploreProjects }) =
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.glowAura} />
+    <View style={[styles.container, isMobile && styles.containerMobile]}>
+      {/* Subtle Ambient Top Spotlight */}
+      <View pointerEvents="none" style={styles.ambientSpotlight} />
 
-      <View style={styles.heroCard}>
-        <View style={styles.statusPill}>
-          <View style={styles.statusDot} />
-          <Text style={styles.statusText}>Open for Collaborations & Building Cool Tools</Text>
-        </View>
-
-        <Text style={styles.greeting}>
-          Hi there, I'm <Text style={styles.nameHighlight}>AMAMazing</Text> ✨
+      {/* Minimal Availability Indicator */}
+      <View style={styles.statusRow}>
+        <View style={styles.statusDot} />
+        <Text style={styles.statusText}>
+          Available for collaborations & building cool tools
         </Text>
-
-        <Text style={styles.description}>
-          Master developer umbrella & daily operating system. Crafting modern digital tools, SaaS & WaaS ecosystems, and open source projects.
-        </Text>
-
-        <View style={styles.actionsRow}>
-          <Pressable
-            onPress={() => openUrl('https://www.buymeaboba.com/')}
-            onHoverIn={() => setBobaHovered(true)}
-            onHoverOut={() => setBobaHovered(false)}
-            style={[styles.primaryButton, bobaHovered && styles.primaryButtonHovered]}
-          >
-            <Heart size={16} color="#ffffff" />
-            <Text style={styles.primaryButtonText}>Buy Me a Boba</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => openUrl('https://github.com/AMAMazing')}
-            style={styles.secondaryButton}
-          >
-            <Github size={16} color={theme.colors.text} />
-            <Text style={styles.secondaryButtonText}>GitHub Profile</Text>
-          </Pressable>
-
-          {onExploreProjects ? (
-            <Pressable
-              onPress={onExploreProjects}
-              onHoverIn={() => setExploreHovered(true)}
-              onHoverOut={() => setExploreHovered(false)}
-              style={[styles.outlineButton, exploreHovered && styles.outlineButtonHovered]}
-            >
-              <Sparkles size={16} color={exploreHovered ? '#ffffff' : theme.colors.primaryLight} />
-              <Text style={[styles.outlineButtonText, exploreHovered && styles.outlineButtonTextHovered]}>
-                Explore Featured Projects
-              </Text>
-              <ArrowRight size={14} color={exploreHovered ? '#ffffff' : theme.colors.primaryLight} />
-            </Pressable>
-          ) : null}
-        </View>
       </View>
+
+      {/* Editorial Display Headline */}
+      <Text style={[styles.headline, isMobile && styles.headlineMobile]}>
+        Hi, I'm <Text style={styles.nameAccent}>AMAMazing</Text>.
+      </Text>
+
+      {/* Clean, Restrained Subtitle */}
+      <Text style={[styles.subtitle, isMobile && styles.subtitleMobile]}>
+        Master developer umbrella & daily operating system. Crafting modern
+        digital tools,{' '}
+        <Text style={styles.subtitleHighlight}>SaaS & WaaS ecosystems</Text>,
+        and open-source software.
+      </Text>
+
+      {/* Refined Minimal Action Row */}
+      <View style={styles.actionsRow}>
+        {onExploreProjects ? (
+          <Pressable
+            onPress={onExploreProjects}
+            onHoverIn={() => setExploreHovered(true)}
+            onHoverOut={() => setExploreHovered(false)}
+            style={[
+              styles.primaryBtn,
+              exploreHovered && styles.primaryBtnHovered,
+            ]}
+          >
+            <Text style={styles.primaryBtnText}>Explore Work</Text>
+            <ArrowDownRight size={15} color="#09090b" />
+          </Pressable>
+        ) : null}
+
+        <Pressable
+          onPress={() => openUrl('https://github.com/AMAMazing')}
+          onHoverIn={() => setGithubHovered(true)}
+          onHoverOut={() => setGithubHovered(false)}
+          style={[
+            styles.secondaryBtn,
+            githubHovered && styles.secondaryBtnHovered,
+          ]}
+        >
+          <Github size={15} color="#e2e8f0" />
+          <Text style={styles.secondaryBtnText}>GitHub</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => openUrl('https://www.buymeaboba.com/')}
+          onHoverIn={() => setBobaHovered(true)}
+          onHoverOut={() => setBobaHovered(false)}
+          style={[styles.ghostBtn, bobaHovered && styles.ghostBtnHovered]}
+        >
+          <Heart
+            size={14}
+            color={bobaHovered ? '#f472b6' : '#94a3b8'}
+          />
+          <Text
+            style={[
+              styles.ghostBtnText,
+              bobaHovered && styles.ghostBtnTextHovered,
+            ]}
+          >
+            Buy Me a Boba
+          </Text>
+        </Pressable>
+      </View>
+
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: theme.spacing.xl,
+    paddingTop: 56,
+    paddingBottom: 40,
     position: 'relative',
+    alignItems: 'flex-start',
   },
-  glowAura: {
+  containerMobile: {
+    paddingTop: 32,
+    paddingBottom: 28,
+  },
+  ambientSpotlight: {
     position: 'absolute',
-    top: 20,
-    left: '20%',
-    right: '20%',
-    height: 140,
-    backgroundColor: 'rgba(99, 102, 241, 0.08)',
-    borderRadius: 100,
-    ...(Platform.OS === 'web' ? ({ filter: 'blur(60px)' } as any) : {}),
+    top: -20,
+    left: -40,
+    width: 420,
+    height: 220,
+    borderRadius: 999,
+    backgroundColor: 'rgba(99, 102, 241, 0.07)',
+    ...(Platform.OS === 'web'
+      ? ({
+          filter: 'blur(70px)',
+        } as any)
+      : {}),
   },
-  heroCard: {
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radii.xl,
-    padding: theme.spacing.xl,
-    borderWidth: 1,
-    borderColor: theme.colors.cardBorder,
-  },
-  statusPill: {
-    alignSelf: 'flex-start',
+
+  /* Status Pill */
+  statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: 'rgba(39, 39, 42, 0.8)',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: theme.radii.full,
+    paddingVertical: 5,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
     borderWidth: 1,
-    borderColor: theme.colors.borderLight,
-    marginBottom: theme.spacing.lg,
+    borderColor: 'rgba(255, 255, 255, 0.07)',
+    marginBottom: 24,
   },
   statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: theme.colors.success,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10b981',
   },
   statusText: {
     fontSize: 12,
-    color: theme.colors.textSecondary,
     fontWeight: '500',
+    color: '#94a3b8',
+    letterSpacing: 0.1,
   },
-  greeting: {
-    fontSize: 34,
+
+  /* Typography */
+  headline: {
+    fontSize: 56,
     fontWeight: '800',
     color: '#ffffff',
-    letterSpacing: -0.8,
-    marginBottom: theme.spacing.md,
+    letterSpacing: -2,
+    lineHeight: 62,
+    marginBottom: 18,
   },
-  nameHighlight: {
-    color: theme.colors.primaryLight,
+  headlineMobile: {
+    fontSize: 38,
+    lineHeight: 44,
+    letterSpacing: -1.4,
   },
-  description: {
+  nameAccent: {
+    color: '#a5b4fc',
+  },
+  subtitle: {
+    fontSize: 18,
+    lineHeight: 29,
+    color: '#94a3b8',
+    maxWidth: 620,
+    fontWeight: '400',
+    letterSpacing: -0.2,
+    marginBottom: 32,
+  },
+  subtitleMobile: {
     fontSize: 16,
-    lineHeight: 26,
-    color: theme.colors.textSecondary,
-    maxWidth: 680,
-    marginBottom: theme.spacing.xl,
+    lineHeight: 25,
   },
+  subtitleHighlight: {
+    color: '#e2e8f0',
+    fontWeight: '500',
+  },
+
+  /* Minimal Actions */
   actionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    alignItems: 'center',
+    gap: 10,
   },
-  primaryButton: {
+  primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: theme.radii.md,
+    gap: 6,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 18,
+    paddingVertical: 11,
+    borderRadius: 999,
+    ...(Platform.OS === 'web'
+      ? ({
+          transition: 'all 0.15s ease',
+        } as any)
+      : {}),
   },
-  primaryButtonHovered: {
-    backgroundColor: theme.colors.primaryHover,
+  primaryBtnHovered: {
+    backgroundColor: '#e0e7ff',
     transform: [{ translateY: -1 }],
   },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '600',
+  primaryBtnText: {
+    color: '#09090b',
+    fontSize: 13.5,
+    fontWeight: '700',
+    letterSpacing: -0.1,
   },
-  secondaryButton: {
+  secondaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: theme.colors.backgroundElevated,
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: theme.radii.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderWidth: 1,
-    borderColor: theme.colors.borderLight,
+    borderColor: 'rgba(255, 255, 255, 0.09)',
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    borderRadius: 999,
+    ...(Platform.OS === 'web'
+      ? ({
+          transition: 'all 0.15s ease',
+        } as any)
+      : {}),
   },
-  secondaryButtonText: {
-    color: theme.colors.text,
-    fontSize: 14,
+  secondaryBtnHovered: {
+    backgroundColor: 'rgba(255, 255, 255, 0.09)',
+    borderColor: 'rgba(255, 255, 255, 0.18)',
+    transform: [{ translateY: -1 }],
+  },
+  secondaryBtnText: {
+    color: '#f8fafc',
+    fontSize: 13.5,
     fontWeight: '600',
   },
-  outlineButton: {
+  ghostBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: 'rgba(99, 102, 241, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: theme.radii.md,
+    gap: 7,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    borderRadius: 999,
+    ...(Platform.OS === 'web'
+      ? ({
+          transition: 'all 0.15s ease',
+        } as any)
+      : {}),
   },
-  outlineButtonHovered: {
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary,
+  ghostBtnHovered: {
+    backgroundColor: 'rgba(244, 114, 182, 0.08)',
   },
-  outlineButtonText: {
-    color: theme.colors.primaryLight,
-    fontSize: 14,
-    fontWeight: '600',
+  ghostBtnText: {
+    color: '#94a3b8',
+    fontSize: 13.5,
+    fontWeight: '500',
   },
-  outlineButtonTextHovered: {
-    color: '#ffffff',
+  ghostBtnTextHovered: {
+    color: '#f472b6',
+  },
+
+  /* Hairline Bottom Divider */
+  bottomDivider: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop: 48,
   },
 });
