@@ -13,6 +13,7 @@ import { HeroSection } from '../components/HeroSection';
 import { SectionHeader } from '../components/SectionHeader';
 import { EqualizingGridMatrix, HoverOrigin } from '../components/EqualizingGridMatrix';
 import { OssShowcaseBanner } from '../components/OssShowcaseBanner';
+import { GithubStatsSection } from '../components/GithubStatsSection';
 import { ProjectHoverTakeover } from '../components/ProjectHoverTakeover';
 import { Footer } from '../components/Footer';
 import { RawMarkdownModal } from '../components/RawMarkdownModal';
@@ -166,6 +167,11 @@ export default function HomeScreen() {
               />
             </View>
           ))}
+
+          {/* GitHub Streak & Stats Section */}
+          <GithubStatsSection
+            onLayout={(e: any) => handleLayoutSection('github-stats', e.nativeEvent.layout.y)}
+          />
         </View>
 
         <Footer />

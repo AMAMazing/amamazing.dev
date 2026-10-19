@@ -1,11 +1,17 @@
 export type OssIconType = 'globe' | 'cpu' | 'terminal' | 'package' | 'puzzle' | 'code';
 
+export interface ProjectBadge {
+  src: string;
+  alt: string;
+  url: string;
+}
+
 export interface ProjectItem {
   title: string;
   emoji?: string;
   url: string;
   description: string;
-  badges?: { src: string; alt: string; url: string }[];
+  badges?: ProjectBadge[];
   isSmall?: boolean;
   iconUrl?: string;
   category?: string;
@@ -153,7 +159,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'Web Apps',
     subtitle: 'Open-source browser utilities, transit systems, and game sandboxes',
     icon: 'globe',
-    minHeight: 240,
+    minHeight: 320,
     items: [
       {
         title: 'FocusDJ',
@@ -161,6 +167,13 @@ export const openSourceSections: ProjectSection[] = [
         url: 'https://focusdj.vercel.app/',
         description: 'Pomodoro timer with YouTube playlist integration and dynamic dark theming.',
         category: 'Web App',
+      },
+      {
+        title: 'PolyPlaylist',
+        emoji: '🌍',
+        url: 'https://www.polyplaylist.com/',
+        description: 'Language Learning website achieved via sentence mining!',
+        category: 'Education',
       },
       {
         title: 'DJ Malona',
@@ -186,7 +199,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'Desktop',
     subtitle: 'Open-source local dev servers and desktop automation utilities',
     icon: 'cpu',
-    minHeight: 220,
+    minHeight: 280,
     items: [
       {
         title: 'Cline X',
@@ -212,7 +225,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'PyPI',
     subtitle: 'Open-source libraries published on PyPI for developers',
     icon: 'terminal',
-    minHeight: 260,
+    minHeight: 360,
     items: [
       {
         title: 'talktollm',
@@ -223,9 +236,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Sep 16, 2026',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/talktollm.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/talktollm/',
+            src: 'https://static.pepy.tech/badge/talktollm',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/talktollm',
           },
         ],
       },
@@ -238,9 +251,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Sep 16, 2026',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/optimisewait.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/optimisewait/',
+            src: 'https://static.pepy.tech/badge/optimisewait',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/optimisewait',
           },
         ],
       },
@@ -253,9 +266,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Jun 19, 2026',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/upload-socials.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/upload-socials/',
+            src: 'https://static.pepy.tech/badge/upload-socials',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/upload-socials',
           },
         ],
       },
@@ -269,9 +282,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Jul 13, 2025',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/smartzoom.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/smartzoom/',
+            src: 'https://static.pepy.tech/badge/smartzoom',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/smartzoom',
           },
         ],
       },
@@ -284,9 +297,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Apr 10, 2025',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/smartpaste.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/smartpaste/',
+            src: 'https://static.pepy.tech/badge/smartpaste',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/smartpaste',
           },
         ],
       },
@@ -299,9 +312,9 @@ export const openSourceSections: ProjectSection[] = [
         released: 'Apr 5, 2025',
         badges: [
           {
-            src: 'https://img.shields.io/pypi/v/pacetype.svg',
-            alt: 'PyPI Version',
-            url: 'https://pypi.org/project/pacetype/',
+            src: 'https://static.pepy.tech/badge/pacetype',
+            alt: 'PyPI Downloads',
+            url: 'https://pepy.tech/projects/pacetype',
           },
         ],
       },
@@ -315,7 +328,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'Chrome Ext',
     subtitle: 'Productivity, AI workflow, and utility browser extensions',
     icon: 'puzzle',
-    minHeight: 260,
+    minHeight: 320,
     items: [
       {
         title: 'AI Studio Auto Rerun',
@@ -372,7 +385,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'VS Code Ext',
     subtitle: 'Visual Studio Code extensions for GitHub Codespaces, snippet management, and workspace launching',
     icon: 'code',
-    minHeight: 220,
+    minHeight: 280,
     items: [
       {
         title: 'Codespace Assistant',
@@ -406,7 +419,7 @@ export const openSourceSections: ProjectSection[] = [
     shortTitle: 'NPM',
     subtitle: 'Developer scaffolding and starter CLI boilerplates',
     icon: 'package',
-    minHeight: 180,
+    minHeight: 240,
     items: [
       {
         title: 'create-ama-stack',
@@ -430,9 +443,10 @@ export const navigationItems = [
     .filter((section) => Boolean(section.navLabel))
     .map((section) => ({
       name: section.navLabel!,
-      href: `#${section.id}`,
+      href: '#' + section.id,
       id: section.id,
     })),
+  { name: 'Stats & Activity', href: '#github-stats', id: 'github-stats' },
 ];
 
 export const totalOssCount = openSourceSections.reduce(
@@ -441,7 +455,8 @@ export const totalOssCount = openSourceSections.reduce(
 );
 
 export const generateMarkdown = (): string => {
-  // Matches GitHub's exact heading-to-anchor slug rules (preserves the leading hyphen from emojis)
+  const tick = String.fromCharCode(96);
+  // Matches GitHub's exact heading-to-anchor slug rules
   const toGitHubAnchor = (headingText: string) =>
     headingText
       .toLowerCase()
@@ -449,36 +464,54 @@ export const generateMarkdown = (): string => {
       .replace(/\s+/g, '-');
 
   const renderTable = (items: ProjectItem[]) => {
+    const hasAnyBadges = items.some((p) => p.badges && p.badges.length > 0);
     const rows = items
       .map((p) => {
-        const project = `${p.emoji ? `${p.emoji} ` : ''}[**${p.title}**](${p.url})`;
+        const project = (p.emoji ? p.emoji + ' ' : '') + '[**' + p.title + '**](' + p.url + ')';
         // Uses non-breaking spaces so category badges stay on a single clean line
-        const category = p.category ? `\`${p.category.replace(/ /g, '\u00A0')}\`` : '—';
-        return `| ${project} | ${category} | ${p.description} |`;
+        const category = p.category ? tick + p.category.replace(/ /g, '\u00A0') + tick : '—';
+        if (hasAnyBadges) {
+          const badgeMd =
+            p.badges && p.badges.length > 0
+              ? p.badges.map((b) => '[![' + b.alt + '](' + b.src + ')](' + b.url + ')').join(' ')
+              : '—';
+          return '| ' + project + ' | ' + category + ' | ' + badgeMd + ' | ' + p.description + ' |';
+        }
+        return '| ' + project + ' | ' + category + ' | ' + p.description + ' |';
       })
       .join('\n');
 
+    if (hasAnyBadges) {
+      return [
+        '| Project | Category | Downloads | Description |',
+        '| :--- | :--- | :--- | :--- |',
+        rows,
+      ].join('\n');
+    }
+
     return [
-      `| Project | Category | Description |`,
-      `| :--- | :--- | :--- |`,
+      '| Project | Category | Description |',
+      '| :--- | :--- | :--- |',
       rows,
     ].join('\n');
   };
 
   // 1. Dynamic Navigation Bar
-  const featuredHeading = `🌟 Featured Core Projects`;
+  const featuredHeading = '🌟 Featured Core Projects';
+  const statsHeading = '🔥 GitHub Stats & Streak';
   const navLinks = [
-    `[🌟 Featured](#${toGitHubAnchor(featuredHeading)})`,
+    '[🌟 Featured](#' + toGitHubAnchor(featuredHeading) + ')',
     ...openSourceSections.map((s) => {
-      const heading = `${s.emoji} ${s.title}`;
-      return `[${s.emoji} ${s.shortTitle}](#${toGitHubAnchor(heading)})`;
+      const heading = s.emoji + ' ' + s.title;
+      return '[' + s.emoji + ' ' + s.shortTitle + '](#' + toGitHubAnchor(heading) + ')';
     }),
+    '[🔥 GitHub Stats & Streak](#' + toGitHubAnchor(statsHeading) + ')',
   ].join(' • ');
 
   // 2. Featured Core Projects Section
   const featuredMd = [
-    `## ${featuredHeading}`,
-    ``,
+    '## ' + featuredHeading,
+    '',
     renderTable(featuredProjects),
   ].join('\n');
 
@@ -486,45 +519,62 @@ export const generateMarkdown = (): string => {
   const ossMd = openSourceSections
     .map((section) =>
       [
-        `### ${section.emoji} ${section.title}`,
-        `> *${section.subtitle}*`,
-        ``,
+        '### ' + section.emoji + ' ' + section.title,
+        '> *' + section.subtitle + '*',
+        '',
         renderTable(section.items),
       ].join('\n')
     )
     .join('\n\n---\n\n');
 
-  // 4. Final GitHub README with Hero Portfolio Showcase
+  // 4. GitHub Stats & Activity Section
+  const statsMd = [
+    '## ' + statsHeading,
+    '',
+    '<div align="center">',
+    '',
+    '[![AMAMazing GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=AMAMazing&theme=dark&hide_border=true&background=14181c&ring=818cf8&fire=818cf8&currStreakLabel=a5b4fc)](https://github.com/AMAMazing)',
+    '',
+    '[![AMAMazing GitHub Stats](https://github-readme-stats.vercel.app/api?username=AMAMazing&show_icons=true&theme=dark&hide_border=true&bg_color=14181c&title_color=818cf8&text_color=cbd5e1&icon_color=34d399&hide=issues,contribs&include_all_commits=true&count_private=true)](https://github.com/AMAMazing)',
+    '',
+    '</div>',
+  ].join('\n');
+
+  // 5. Final GitHub README with Hero Portfolio Showcase
   return [
-    `<div align="center">`,
-    ``,
-    `# ⚡ AMA Mazing`,
-    ``,
-    ``,
-    `[![Visit AMAMazing.dev](https://img.shields.io/badge/🌐_LIVE_PORTFOLIO-AMAMazing.dev-6366f1?style=for-the-badge&labelColor=0f172a)](https://www.amamazing.dev/)`,
-    ``,
-    `**${featuredProjects.length} Featured Flagships** • **${totalOssCount} Open Source Contributions**`,
-    ``,
+    '<div align="center">',
+    '',
+    '# ⚡ AMA Mazing',
+    '',
+    '',
+    '[![Visit AMAMazing.dev](https://img.shields.io/badge/🌐_LIVE_PORTFOLIO-AMAMazing.dev-6366f1?style=for-the-badge&labelColor=0f172a)](https://www.amamazing.dev/)',
+    '',
+    '**' + featuredProjects.length + ' Featured Flagships** • **' + totalOssCount + ' Open Source Contributions**',
+    '',
     navLinks,
-    ``,
-    `</div>`,
-    ``,
-    `---`,
-    ``,
+    '',
+    '</div>',
+    '',
+    '---',
+    '',
     featuredMd,
-    ``,
-    `---`,
-    ``,
-    `## 🚀 Open Source Contributions (${totalOssCount})`,
-    ``,
+    '',
+    '---',
+    '',
+    '## 🚀 Open Source Contributions (' + totalOssCount + ')',
+    '',
     ossMd,
-    ``,
-    `---`,
-    ``,
-    `<div align="center">`,
-    ``,
-    `### ⚡ [**www.amamazing.dev**](https://www.amamazing.dev/)`,
-    ``,
-    `</div>`,
+    '',
+    '---',
+    '',
+    statsMd,
+    '',
+    '---',
+    '',
+    '<div align="center">',
+    '',
+    '### ⚡ [**www.amamazing.dev**](https://www.amamazing.dev/)',
+    '',
+    '</div>',
   ].join('\n');
 };

@@ -77,7 +77,7 @@ export function ProjectHoverTakeover({
             : {},
         ]}
       >
-        {/* Top Meta Pills */}
+        {/* Top Meta Pills & Badges */}
         <View style={styles.takeoverBadgeRow}>
           {project.category && (
             <View
@@ -102,6 +102,20 @@ export function ProjectHoverTakeover({
             <View style={styles.takeoverDatePill}>
               <Calendar size={13} color="#cbd5e1" />
               <Text style={styles.takeoverDateText}>{project.released}</Text>
+            </View>
+          )}
+
+          {/* PyPI Downloads & Version Badges */}
+          {project.badges && project.badges.length > 0 && (
+            <View style={styles.takeoverBadgesWrapper}>
+              {project.badges.map((badge, bIdx) => (
+                <Image
+                  key={bIdx}
+                  source={{ uri: badge.src }}
+                  style={styles.takeoverBadgeImage}
+                  resizeMode="contain"
+                />
+              ))}
             </View>
           )}
         </View>
@@ -320,6 +334,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#cbd5e1',
+  },
+  takeoverBadgesWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  takeoverBadgeImage: {
+    height: 22,
+    width: 110,
   },
   takeoverHeaderRow: {
     flexDirection: 'row',

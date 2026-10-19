@@ -59,7 +59,7 @@ export const getSizeConfig = (cols: number, count: number) => {
   if (count <= 4) {
     return {
       iconSize: 32,
-      boxSize: 60,
+      boxSize: 58,
       titleSize: 15,
       categorySize: 11,
       padding: 16,
@@ -107,6 +107,19 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
   const { c: cols, r: rows } = getGridMap(count);
   const size = getSizeConfig(cols, count);
 
+  const hasBadges = items.some((item) => Boolean(item.badges && item.badges.length > 0));
+
+  // Dynamically calculate required minimum height per cell to guarantee nothing is clipped
+  const badgeSpace = hasBadges ? 38 : 0;
+  const minCellHeight = Math.max(
+    size.boxSize + size.titleSize + size.categorySize + size.padding * 2 + badgeSpace + 42,
+    hasBadges ? 180 : 150
+  );
+  const calculatedHeight = Math.max(
+    minHeight,
+    rows * minCellHeight + (rows - 1) * 12 + 24
+  );
+
   const openUrl = (url: string) => {
     if (!url) return;
     if (Platform.OS === 'web') {
@@ -121,15 +134,16 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
       ? {
           display: 'grid',
           gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${rows}, minmax(${minCellHeight}px, 1fr))`,
           gap: 12,
-          height: minHeight,
+          minHeight: calculatedHeight,
           width: '100%',
         }
       : {
           flexDirection: 'row',
           flexWrap: 'wrap',
           gap: 12,
+          minHeight: calculatedHeight,
         };
 
   return (
@@ -168,7 +182,7 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
               style={[
                 styles.matrixCell,
                 isOss && styles.matrixCellOss,
-                { padding: size.padding },
+                { padding: size.padding, minHeight: minCellHeight },
                 isHovered && styles.matrixCellHovered,
                 isHovered && isOss && styles.matrixCellOssHovered,
                 isBlue && styles.matrixCellBlue,
@@ -211,7 +225,7 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                 )}
               </View>
 
-              {/* Title & Category Tag */}
+              {/* Title, Category Tag, & Badges */}
               <View style={styles.cellContent}>
                 <Text
                   style={[
@@ -249,6 +263,28 @@ export const EqualizingGridMatrix: React.FC<EqualizingGridMatrixProps> = ({
                     >
                       {item.category}
                     </Text>
+                  </View>
+                )}
+
+                {/* PyPI / Package Badges (downloads, version) */}
+                {item.badges && item.badges.length > 0 && (
+                  <View style={styles.tileBadgesRow}>
+                    {item.badges.map((b, bIdx) => (
+                      <Pressable
+                        key={bIdx}
+                        onPress={(e) => {
+                          e.stopPropagation?.();
+                          openUrl(b.url);
+                        }}
+                        style={styles.tileBadgeWrapper}
+                      >
+                        <Image
+                          source={{ uri: b.src }}
+                          style={styles.tileBadgeImage}
+                          resizeMode="contain"
+                        />
+                      </Pressable>
+                    ))}
                   </View>
                 )}
               </View>
@@ -362,7 +398,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ffffff',
     textAlign: 'center',
-    marginBottom: 5,
+    marginBottom: 6,
     letterSpacing: -0.2,
   },
   cellTitleHovered: {
@@ -379,7 +415,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
     paddingHorizontal: 8,
-    paddingVertical: 2.5,
+    paddingVertical: 3,
     borderRadius: theme.radii.full,
   },
   categoryTagOss: {
@@ -404,6 +440,21 @@ const styles = StyleSheet.create({
   },
   categoryTagTextBlue: {
     color: '#93c5fd',
+  },
+  tileBadgesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginTop: 8,
+  },
+  tileBadgeWrapper: {
+    height: 18,
+  },
+  tileBadgeImage: {
+    height: 18,
+    width: 95,
   },
   cornerAction: {
     position: 'absolute',
