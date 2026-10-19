@@ -60,12 +60,13 @@ export const featuredProjects: ProjectItem[] = [
   {
     title: 'Leetcode Unlocked',
     emoji: '🔓',
-    url: 'https://www.youtube.com/@LeetcodeDaily-ama',
+    url: 'https://www.leetcodeunlocked.com/',
     description:
       'Full Leetcode ecosystem with daily video solutions, unlocked editorial explanations, and algorithmic code walkthroughs.',
     iconUrl:
       'https://yt3.googleusercontent.com/gmgry3wm9NMOg1KzaXHK-fr27SD22z-Kt5Af8eXwRWwLhKPxOEq8TkM8JKt-Ey4eD8xUguFS=s160-c-k-c0x00ffffff-no-rj',
     category: 'Education & Ads',
+    webUrl: 'https://www.leetcodeunlocked.com/',
     youtubeUrl: 'https://www.youtube.com/@LeetcodeDaily-ama',
     isAAdsMaximizing: true,
     status: 'A-Ads Maximizing',
@@ -440,23 +441,90 @@ export const totalOssCount = openSourceSections.reduce(
 );
 
 export const generateMarkdown = (): string => {
-  const featuredMd =
-    `## Featured Projects (Core)\n` +
-    featuredProjects
-      .map((p) => `- **${p.title}** (${p.category}): ${p.description} [Link](${p.url})`)
+  // Matches GitHub's exact heading-to-anchor slug rules (preserves the leading hyphen from emojis)
+  const toGitHubAnchor = (headingText: string) =>
+    headingText
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+
+  const renderTable = (items: ProjectItem[]) => {
+    const rows = items
+      .map((p) => {
+        const project = `${p.emoji ? `${p.emoji} ` : ''}[**${p.title}**](${p.url})`;
+        // Uses non-breaking spaces so category badges stay on a single clean line
+        const category = p.category ? `\`${p.category.replace(/ /g, '\u00A0')}\`` : '—';
+        return `| ${project} | ${category} | ${p.description} |`;
+      })
       .join('\n');
 
-  const ossMd = openSourceSections
-    .map((section) => {
-      const itemsMd = section.items
-        .map((p) => {
-          const releaseTag = p.released ? ` (${p.released})` : '';
-          return `- **${p.title}**: ${p.description}${releaseTag} [Link](${p.url})`;
-        })
-        .join('\n');
-      return `### ${section.title}\n${itemsMd}`;
-    })
-    .join('\n\n');
+    return [
+      `| Project | Category | Description |`,
+      `| :--- | :--- | :--- |`,
+      rows,
+    ].join('\n');
+  };
 
-  return `# AMAMazing.Dev Portfolio\n\n${featuredMd}\n\n## Open Source Contributions\n\n${ossMd}`;
+  // 1. Dynamic Navigation Bar
+  const featuredHeading = `🌟 Featured Core Projects`;
+  const navLinks = [
+    `[🌟 Featured](#${toGitHubAnchor(featuredHeading)})`,
+    ...openSourceSections.map((s) => {
+      const heading = `${s.emoji} ${s.title}`;
+      return `[${s.emoji} ${s.shortTitle}](#${toGitHubAnchor(heading)})`;
+    }),
+  ].join(' • ');
+
+  // 2. Featured Core Projects Section
+  const featuredMd = [
+    `## ${featuredHeading}`,
+    ``,
+    renderTable(featuredProjects),
+  ].join('\n');
+
+  // 3. Open Source Sections
+  const ossMd = openSourceSections
+    .map((section) =>
+      [
+        `### ${section.emoji} ${section.title}`,
+        `> *${section.subtitle}*`,
+        ``,
+        renderTable(section.items),
+      ].join('\n')
+    )
+    .join('\n\n---\n\n');
+
+  // 4. Final GitHub README with Hero Portfolio Showcase
+  return [
+    `<div align="center">`,
+    ``,
+    `# ⚡ AMA Mazing`,
+    ``,
+    ``,
+    `[![Visit AMAMazing.dev](https://img.shields.io/badge/🌐_LIVE_PORTFOLIO-AMAMazing.dev-6366f1?style=for-the-badge&labelColor=0f172a)](https://www.amamazing.dev/)`,
+    ``,
+    `**${featuredProjects.length} Featured Flagships** • **${totalOssCount} Open Source Contributions**`,
+    ``,
+    navLinks,
+    ``,
+    `</div>`,
+    ``,
+    `---`,
+    ``,
+    featuredMd,
+    ``,
+    `---`,
+    ``,
+    `## 🚀 Open Source Contributions (${totalOssCount})`,
+    ``,
+    ossMd,
+    ``,
+    `---`,
+    ``,
+    `<div align="center">`,
+    ``,
+    `### ⚡ [**www.amamazing.dev**](https://www.amamazing.dev/)`,
+    ``,
+    `</div>`,
+  ].join('\n');
 };
