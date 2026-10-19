@@ -13,7 +13,7 @@ export const GithubStatsSection: React.FC<GithubStatsSectionProps> = ({ onLayout
   const githubProfileUrl = `https://github.com/${username}`;
 
   const streakCardUrl = `https://github-readme-streak-stats.herokuapp.com/?user=${username}&theme=dark&hide_border=true&background=14181c&ring=818cf8&fire=818cf8&currStreakLabel=a5b4fc`;
-  const statsCardUrl = `https://github-readme-stats.vercel.app/api?username=AMAMazing&show_icons=true&theme=dark&hide_border=true&bg_color=14181c&title_color=818cf8&text_color=cbd5e1&icon_color=34d399&hide=issues,contribs&include_all_commits=true&count_private=true`;
+  const statsCardUrl = `https://github-readme-stats.vercel.app/api?username=AMAMazing&show_icons=true&theme=dark&hide_border=true&bg_color=14181c&title_color=818cf8&text_color=cbd5e1&icon_color=34d399&include_all_commits=true&count_private=true`;
 
   const openGithub = () => {
     if (Platform.OS === 'web') {
