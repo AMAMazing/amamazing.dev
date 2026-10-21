@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Platform, Linking, Image } from 'react-native';
-import { Flame, GitCommit, ExternalLink } from 'lucide-react-native';
+import { Flame, ExternalLink } from 'lucide-react-native';
 import { SectionHeader } from './SectionHeader';
 import { theme } from '../lib/theme';
 
@@ -13,7 +13,6 @@ export const GithubStatsSection: React.FC<GithubStatsSectionProps> = ({ onLayout
   const githubProfileUrl = `https://github.com/${username}`;
 
   const streakCardUrl = `https://github-readme-streak-stats.herokuapp.com/?user=${username}&theme=dark&hide_border=true&background=14181c&ring=818cf8&fire=818cf8&currStreakLabel=a5b4fc`;
-  const statsCardUrl = `https://github-readme-stats.vercel.app/api?username=AMAMazing&show_icons=true&theme=dark&hide_border=true&bg_color=14181c&title_color=818cf8&text_color=cbd5e1&icon_color=34d399&include_all_commits=true&count_private=true`;
 
   const openGithub = () => {
     if (Platform.OS === 'web') {
@@ -40,12 +39,11 @@ export const GithubStatsSection: React.FC<GithubStatsSectionProps> = ({ onLayout
 
       <SectionHeader
         emoji="🔥"
-        title="GitHub Stats & Activity"
-        subtitle="Tracking daily commit streaks, open-source repositories, and developer milestones"
+        title="GitHub Contribution Streak"
+        subtitle="Tracking daily open-source contributions and developer momentum"
       />
 
-      <View style={styles.cardsGrid}>
-        {/* Streak Stats Card */}
+      <View style={styles.centerWrapper}>
         <Pressable
           onPress={openGithub}
           style={({ hovered }: any) => [
@@ -55,10 +53,10 @@ export const GithubStatsSection: React.FC<GithubStatsSectionProps> = ({ onLayout
         >
           <View style={styles.cardHeader}>
             <View style={styles.cardHeaderTitleRow}>
-              <Flame size={16} color="#fb923c" />
-              <Text style={styles.cardTitle}>Contribution Streak</Text>
+              <Flame size={18} color="#fb923c" />
+              <Text style={styles.cardTitle}>Current Streak</Text>
             </View>
-            <ExternalLink size={14} color="rgba(255, 255, 255, 0.3)" />
+            <ExternalLink size={16} color="rgba(255, 255, 255, 0.3)" />
           </View>
           <View style={styles.imageContainer}>
             {Platform.OS === 'web' ? (
@@ -68,52 +66,13 @@ export const GithubStatsSection: React.FC<GithubStatsSectionProps> = ({ onLayout
                 style={{
                   width: '100%',
                   height: 'auto',
-                  borderRadius: 12,
                   display: 'block',
-                  maxWidth: 495,
+                  maxWidth: 540,
                 }}
               />
             ) : (
               <Image
                 source={{ uri: streakCardUrl }}
-                style={styles.nativeCardImage}
-                resizeMode="contain"
-              />
-            )}
-          </View>
-        </Pressable>
-
-        {/* Overall Stats Card */}
-        <Pressable
-          onPress={openGithub}
-          style={({ hovered }: any) => [
-            styles.statCardWrapper,
-            hovered && styles.statCardWrapperHovered,
-          ]}
-        >
-          <View style={styles.cardHeader}>
-            <View style={styles.cardHeaderTitleRow}>
-              <GitCommit size={16} color="#34d399" />
-              <Text style={styles.cardTitle}>Milestones & Overview</Text>
-            </View>
-            <ExternalLink size={14} color="rgba(255, 255, 255, 0.3)" />
-          </View>
-          <View style={styles.imageContainer}>
-            {Platform.OS === 'web' ? (
-              <img
-                src={statsCardUrl}
-                alt="AMAMazing GitHub Stats"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  borderRadius: 12,
-                  display: 'block',
-                  maxWidth: 495,
-                }}
-              />
-            ) : (
-              <Image
-                source={{ uri: statsCardUrl }}
                 style={styles.nativeCardImage}
                 resizeMode="contain"
               />
@@ -173,26 +132,22 @@ const styles = StyleSheet.create({
     color: '#a5b4fc',
     letterSpacing: 0.5,
   },
-  cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 18,
+  centerWrapper: {
     width: '100%',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
   statCardWrapper: {
-    flex: 1,
-    minWidth: 320,
-    maxWidth: 580,
+    width: '100%',
+    maxWidth: 640,
     backgroundColor: 'rgba(20, 24, 28, 0.85)',
-    borderRadius: 20,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.08)',
-    padding: 16,
+    padding: 24,
     alignItems: 'center',
     ...(Platform.OS === 'web'
       ? ({
-          transition: 'transform 0.18s ease-out, border-color 0.18s ease-out, box-shadow 0.18s ease-out',
+          transition: 'transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out',
           cursor: 'pointer',
         } as any)
       : {}),
@@ -200,10 +155,10 @@ const styles = StyleSheet.create({
   statCardWrapperHovered: {
     borderColor: 'rgba(129, 140, 248, 0.5)',
     backgroundColor: 'rgba(24, 28, 36, 0.95)',
-    transform: [{ translateY: -3 }],
+    transform: [{ translateY: -4 }],
     ...(Platform.OS === 'web'
       ? ({
-          boxShadow: '0 12px 30px -10px rgba(99, 102, 241, 0.25)',
+          boxShadow: '0 16px 40px -12px rgba(99, 102, 241, 0.25)',
         } as any)
       : {}),
   },
@@ -212,16 +167,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 12,
-    paddingHorizontal: 4,
+    marginBottom: 20,
+    paddingHorizontal: 8,
   },
   cardHeaderTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   cardTitle: {
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: '700',
     color: '#cbd5e1',
     letterSpacing: 0.3,
@@ -230,9 +185,13 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#14181c',
+    borderRadius: 12,
+    paddingVertical: 12,
   },
   nativeCardImage: {
-    width: 320,
-    height: 195,
+    width: '100%',
+    maxWidth: 540,
+    aspectRatio: 467 / 195,
   },
 });
